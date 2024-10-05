@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { Message } from "@/types/message";
+import { useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet } from "react-native";
 
 interface MessageContainerProps {
@@ -7,12 +8,28 @@ interface MessageContainerProps {
 }
 
 export const MessageContainer = ({ item }: MessageContainerProps) => {
+  const { displayName } = useLocalSearchParams();
+  const isMyMessage = item.displayName === displayName;
+
   return (
-    <View key={item.id} style={styles.messageContainer}>
-      <View style={styles.messageBubble}>
+    <View
+      key={item.id}
+      style={[
+        styles.messageContainer,
+        { alignItems: isMyMessage ? "flex-end" : "flex-start" },
+      ]}
+    >
+      <View
+        style={[
+          styles.messageBubble,
+          { backgroundColor: isMyMessage ? Colors.yellow : Colors.grayLight },
+        ]}
+      >
         <Text style={styles.messageText}>{item.message}</Text>
       </View>
-      <Text style={styles.messageAuthor}>{item.displayName}</Text>
+      <Text style={styles.messageAuthor}>
+        {isMyMessage ? "Me" : item.displayName}
+      </Text>
     </View>
   );
 };
@@ -20,10 +37,8 @@ export const MessageContainer = ({ item }: MessageContainerProps) => {
 const styles = StyleSheet.create({
   messageContainer: {
     marginBottom: 12,
-    alignItems: "flex-start",
   },
   messageBubble: {
-    backgroundColor: Colors.grayLight,
     padding: 10,
     borderRadius: 16,
     marginBottom: 4,
@@ -36,6 +51,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4,
     marginLeft: 4,
+    marginRight: 4,
     color: Colors.tertiary,
   },
 });

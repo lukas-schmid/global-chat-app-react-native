@@ -52,7 +52,6 @@ const ChatScreen = () => {
         setLastVisibleMessage(snapshot.docs[snapshot.docs.length - 1]);
       }
     });
-    fetchOlderMessages();
 
     return () => subscribe();
   }, []);
