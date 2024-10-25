@@ -21,6 +21,7 @@ export const Footer = ({ flatListRef }: FooterProps) => {
   const { displayName } = useLocalSearchParams();
   const [newMessage, setNewMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [inputHeight, setInputHeight] = useState(40);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() && !sendingMessage) {
@@ -34,6 +35,7 @@ export const Footer = ({ flatListRef }: FooterProps) => {
           timestamp: new Date(),
         });
         setNewMessage("");
+        setInputHeight(40);
         flatListRef.current?.scrollToIndex({ index: 0, animated: true });
       } catch (error) {
         console.error("Error sending message: ", error);
@@ -46,13 +48,16 @@ export const Footer = ({ flatListRef }: FooterProps) => {
   return (
     <View style={styles.footer}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { height: inputHeight }]}
         value={newMessage}
         placeholder="Type a message..."
         onChangeText={setNewMessage}
         multiline={true}
         blurOnSubmit={false}
         editable={!sendingMessage}
+        onContentSizeChange={(e) =>
+          setInputHeight(Math.min(120, e.nativeEvent.contentSize.height))
+        }
       />
       <Button
         onPress={handleSendMessage}
@@ -68,7 +73,7 @@ export const Footer = ({ flatListRef }: FooterProps) => {
 const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     padding: 8,
     borderTopWidth: 1,
     borderTopColor: Colors.grayLight,
@@ -77,7 +82,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 40,
-    maxHeight: 120,
     fontSize: 18,
     borderColor: Colors.grayLight,
     borderWidth: 1,
